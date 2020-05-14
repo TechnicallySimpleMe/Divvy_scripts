@@ -1,3 +1,4 @@
+#!/bin/bash
 # Script for onboarding multiple Azure Subscriptions
 # You need to have permissions to grant permissions to an app registration for this to work
 # Steps:
@@ -48,8 +49,13 @@ az account list --query '[].{Id:id}' --output tsv | while read -r SUB_ID ; do
     SCOPE=`echo /subscriptions/$SUB_ID`
 
     # Get the name and tenant ID from the sub
+    # If the subcription name is on the exclude list skip it
     SUB_NAME=`az account show -s $SUB_ID --query '[name]' --output tsv`
-    TENANT_ID=`az account show -s $SUB_ID --query '[tenantId]' --output tsv`
+    if [[ "$SUB_NAME" =~ $(echo ^\($(paste -sd'|' azure-excluded-subscriptions)\)$) ]]; then
+       continue
+    else
+       TENANT_ID=`az account show -s $SUB_ID --query '[tenantId]' --output tsv`
+    fi
     
     echo "Starting onboarding of Subscription $SUB_NAME (ID: $SUB_ID)"
 

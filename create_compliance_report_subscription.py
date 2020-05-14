@@ -151,3 +151,53 @@ print(create_export_config(export_id))
 
 print("Creating subscription that's linked to the export config")
 print(create_subscription())
+
+
+'''
+https://sales-demo.divvycloud.com/v2/compliance/score-card/export-upload
+{name: "aa export"}
+response: {"id": 16}
+
+https://sales-demo.divvycloud.com/v2/compliance/score-card/export-upload/configs
+{
+  "custom_pack_id": null,
+  "backoffice_pack_id": 17,
+  "organization_service_filters": {
+    "organization_service_ids": [],
+    "cloud_types": [],
+    "badges": []
+  },
+  "insight_filters": {
+    "severity": [],
+    "insight_ids": [],
+    "resource_types": []
+  },
+  "bad_only": false,
+  "export_id": 16,
+  "name": "aa export config",
+  "resource_tags": []
+}
+
+
+https://sales-demo.divvycloud.com/v2/subscriptions/
+{
+  "minute": 0,
+  "hour": 0,
+  "name": "aa",
+  "schedule": "daily",
+  "day_of_week": "monday",
+  "email_addresses": [
+    "a@b.c"
+  ],
+  "email_sub_title": "a",
+  "resource_tags": [],
+  "badges": [
+    {"key": "AcctOwner", "value": "alex.corstorphine"},
+    {"key": "Env", "value": "prod"}
+],
+  "badge_filter_operator": "OR",
+  "item_type": "scorecard",
+  "item_id": 16
+}
+Response: {"id": 38}
+'''
