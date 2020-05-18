@@ -9,7 +9,7 @@ requests.packages.urllib3.disable_warnings() # verify=False throws warnings othe
 ### SUBSCRIPTION PARAMETERS
 subscription_email_hour = 0
 subscription_email_minute = 12
-subscription_name = "Alex Subscription2"
+subscription_name = "Alex Subscription1"
 subscription_schedule = "daily"
 subscription_day_of_week = "monday"
 subscription_emails = ['alex.corstorphine@divvycloud.com']
@@ -17,10 +17,14 @@ subscription_email_title = "Divvy Report"
 resource_tags = []
 
 # Add another line for each badge that you want to scope on (currently set to look for both badges, not either badge)
-subscription_badges = [
-    {"key": "AcctOwner", "value": "alex.corstorphine"},
-    {"key": "Env", "value": "prod"}
+config_badges = [
+    ["AccountOwner", "alex.corstorphine"],
+    ["Env","prod"]
 ]
+# subscription_badges = [
+#     {"key": "AcctOwner", "value": "alex.corstorphine"},
+#     {"key": "Env", "value": "prod"}
+# ]
 
 ### ONLY can be one of these and the other needs to be None
 backoffice_pack_id = 17
@@ -90,7 +94,8 @@ def create_export_config(export_id):
         "organization_service_filters": {
             "organization_service_ids": [],
             "cloud_types": [],
-            "badges": []
+            "badges": config_badges,
+            "badge_filter_operator": "AND"
           },
         "insight_filters": {
             "severity": [],
@@ -114,7 +119,21 @@ def create_export_config(export_id):
     except:
         return response           
 
-def create_subscription():
+# def list_configs():
+#     data = {}
+#     response = requests.get(
+#         url=base_url + '/v2/compliance/score-card/export-upload/configs',
+#         verify=False,
+#         data={},
+#         headers=headers
+#         )
+#     try:
+#         return response.json()
+#     except:
+#         return response   
+
+
+def create_subscription(item_id):
     data = {
         "minute": subscription_email_minute,
         "hour": subscription_email_hour,
@@ -124,10 +143,10 @@ def create_subscription():
         "email_addresses": subscription_emails,
         "email_sub_title": subscription_email_title,
         "resource_tags": resource_tags,
-        "badges": subscription_badges,
+        "badges": [],
         "badge_filter_operator": "AND",
         "item_type": "scorecard",        
-        "item_id": 1
+        "item_id": item_id
     }
 
     response = requests.post(
@@ -149,8 +168,17 @@ print("EXPORT ID " + str(export_id))
 print("Linking export to a config")
 print(create_export_config(export_id))
 
+# export_configurations = list_configs()
+# matching_configs = [] ## we want just the last export config (duplicate names are allowed)
+# for config in export_configurations:
+#     if config['name'] == subscription_name + " export config":
+#         matching_configs.append(config)
+
+# new_export_config = matching_configs[-1]
+# print(new_export_config)
+
 print("Creating subscription that's linked to the export config")
-print(create_subscription())
+print(create_subscription(export_id))
 
 
 '''
