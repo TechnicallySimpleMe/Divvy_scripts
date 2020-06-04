@@ -34,9 +34,9 @@ Script to list all accounts linked to DivvyCloud
 Sample Output:    
 [Alex-MBP scripts]$python list_accounts.py     
 Name | Account_ID | Cloud_Type | Resource_Count | Creation_Time    
-AWS Sales Account | 014578312761 | AWS | 1157 | 2016-03-29 16:31:48    
-DivvyCloud QA RO | 050283019178 | AWS | 3692 | 2016-03-30 17:09:27    
-Acme Corp Development | 212860832355 | AWS | 448 | 2016-04-05 14:52:24    
+AWS Sales Account | 123456699 | AWS | 1157 | 2016-03-29 16:31:48    
+DivvyCloud QA RO | 123456699 | AWS | 3692 | 2016-03-30 17:09:27    
+Acme Corp Development | 123456699 | AWS | 448 | 2016-04-05 14:52:24    
   
 ## list_insights.py  
 Script to list all pre-canned insights by cloud.   
