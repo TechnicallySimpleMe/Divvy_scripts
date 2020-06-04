@@ -9,30 +9,32 @@ requests.packages.urllib3.disable_warnings() # verify=False throws warnings othe
 ### SUBSCRIPTION PARAMETERS
 subscription_email_hour = 0
 subscription_email_minute = 12
-subscription_name = "Alex Subscription1"
+subscription_name = "troubleshooting6-4-20v4"
 subscription_schedule = "daily"
 subscription_day_of_week = "monday"
-subscription_emails = ['alex.corstorphine@divvycloud.com']
+subscription_emails = ['alex_corstorphine@rapid7.com']
 subscription_email_title = "Divvy Report"
 resource_tags = []
 
 # Add another line for each badge that you want to scope on (currently set to look for both badges, not either badge)
 config_badges = [
-    ["AccountOwner", "alex.corstorphine"],
-    ["Env","prod"]
+    ["env","development"]
+    ["custom","123"]
 ]
+
+
 # subscription_badges = [
 #     {"key": "AcctOwner", "value": "alex.corstorphine"},
 #     {"key": "Env", "value": "prod"}
 # ]
 
 ### ONLY can be one of these and the other needs to be None
-backoffice_pack_id = 17
+backoffice_pack_id = 23
 custom_pack_id = None 
 
 # Username/password to authenticate against the API
 username = "alexc"
-password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+password = "63JtLkVcap[SF>kT}T" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URL
 base_url = "https://sales-demo.divvycloud.com"
@@ -87,6 +89,7 @@ def create_export():
     except:
         return response   
 
+
 def create_export_config(export_id):
     data = {
         "custom_pack_id": custom_pack_id,
@@ -95,7 +98,6 @@ def create_export_config(export_id):
             "organization_service_ids": [],
             "cloud_types": [],
             "badges": config_badges,
-            "badge_filter_operator": "AND"
           },
         "insight_filters": {
             "severity": [],
@@ -107,6 +109,26 @@ def create_export_config(export_id):
         "name": subscription_name + " export config",
         "resource_tags": []
     }
+
+    # data = {
+    #     "custom_pack_id": custom_pack_id,
+    #     "backoffice_pack_id": backoffice_pack_id,
+    #     "organization_service_filters": {
+    #         "organization_service_ids": [],
+    #         "cloud_types": [],
+    #         "badges": config_badges,
+    #         "badge_filter_operator": "AND"
+    #       },
+    #     "insight_filters": {
+    #         "severity": [],
+    #         "insight_ids": [],
+    #         "resource_types": []
+    #         },
+    #     "bad_only": False,
+    #     "export_id": export_id,
+    #     "name": subscription_name + " export config",
+    #     "resource_tags": []
+    # }
 
     response = requests.post(
         url=base_url + '/v2/compliance/score-card/export-upload/configs',
@@ -160,13 +182,40 @@ def create_subscription(item_id):
     except:
         return response   
 
-
+##### Do work
 export_id = create_export()['id']
 print("Creating export")
 print("EXPORT ID " + str(export_id))
 
 print("Linking export to a config")
 print(create_export_config(export_id))
+
+print("Creating subscription that's linked to the export config")
+print(create_subscription(export_id))
+
+# When we try to run an "ondemand" export
+# Error
+# Subscription #61: Config:52 - Subscription #61: Failed to create file across all configurations. Confirm insight data exist and retry.
+
+
+
+# def ondemand_export(id):
+#     data = {"subscription_ids": [id]}
+
+#     response = requests.post(
+#         url=base_url + '/v2/subscriptions/ondemand',
+#         verify=False,
+#         data=json.dumps(data),
+#         headers=headers
+#         )
+#     try:
+#         return response.json()
+#     except:
+#         return response   
+
+# print(ondemand_export(58))
+# print(ondemand_export(61))
+
 
 # export_configurations = list_configs()
 # matching_configs = [] ## we want just the last export config (duplicate names are allowed)
@@ -176,24 +225,24 @@ print(create_export_config(export_id))
 
 # new_export_config = matching_configs[-1]
 # print(new_export_config)
-
-print("Creating subscription that's linked to the export config")
-print(create_subscription(export_id))
-
-
 '''
 https://sales-demo.divvycloud.com/v2/compliance/score-card/export-upload
-{name: "aa export"}
-response: {"id": 16}
+{name: "alex export"}
+{"id": 43}
 
 https://sales-demo.divvycloud.com/v2/compliance/score-card/export-upload/configs
 {
   "custom_pack_id": null,
-  "backoffice_pack_id": 17,
+  "backoffice_pack_id": 3,
   "organization_service_filters": {
     "organization_service_ids": [],
     "cloud_types": [],
-    "badges": []
+    "badges": [
+      [
+        "Compliance",
+        "SOC2"
+      ]
+    ]
   },
   "insight_filters": {
     "severity": [],
@@ -201,31 +250,28 @@ https://sales-demo.divvycloud.com/v2/compliance/score-card/export-upload/configs
     "resource_types": []
   },
   "bad_only": false,
-  "export_id": 16,
-  "name": "aa export config",
+  "export_id": 43,
+  "name": "alex export config",
   "resource_tags": []
 }
-
 
 https://sales-demo.divvycloud.com/v2/subscriptions/
 {
   "minute": 0,
   "hour": 0,
-  "name": "aa",
+  "name": "alex",
   "schedule": "daily",
   "day_of_week": "monday",
   "email_addresses": [
-    "a@b.c"
+    "alex_corstorphine@rapid7.com"
   ],
-  "email_sub_title": "a",
+  "email_sub_title": "test",
   "resource_tags": [],
-  "badges": [
-    {"key": "AcctOwner", "value": "alex.corstorphine"},
-    {"key": "Env", "value": "prod"}
-],
+  "badges": [],
   "badge_filter_operator": "OR",
   "item_type": "scorecard",
-  "item_id": 16
+  "item_id": 43
 }
-Response: {"id": 38}
+
+Response: {"id": 58}
 '''
