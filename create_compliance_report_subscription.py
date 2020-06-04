@@ -9,7 +9,7 @@ requests.packages.urllib3.disable_warnings() # verify=False throws warnings othe
 ### SUBSCRIPTION PARAMETERS
 subscription_email_hour = 0
 subscription_email_minute = 12
-subscription_name = "troubleshooting6-4-20v4"
+subscription_name = "troubleshooting6-4-20v5"
 subscription_schedule = "daily"
 subscription_day_of_week = "monday"
 subscription_emails = ['alex_corstorphine@rapid7.com']
@@ -18,7 +18,7 @@ resource_tags = []
 
 # Add another line for each badge that you want to scope on (currently set to look for both badges, not either badge)
 config_badges = [
-    ["env","development"]
+    ["env","development"],
     ["custom","123"]
 ]
 
@@ -34,7 +34,7 @@ custom_pack_id = None
 
 # Username/password to authenticate against the API
 username = "alexc"
-password = "63JtLkVcap[SF>kT}T" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URL
 base_url = "https://sales-demo.divvycloud.com"
