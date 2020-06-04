@@ -5,13 +5,13 @@ Sample Output:
 
 [Alex-MBP scripts]$python list_accounts.py 
 Name | Account_ID | Cloud_Type | Resource_Count | Creation_Time
-AWS Sales Account | 014578312761 | AWS | 1157 | 2016-03-29 16:31:48
-DivvyCloud QA RO | 050283019178 | AWS | 3692 | 2016-03-30 17:09:27
-Acme Corp Development | 212860832355 | AWS | 448 | 2016-04-05 14:52:24
-AWS Master | 745948225562 | AWS | 898 | 2017-10-22 11:11:17
-Azure Sandbox | 59026a9c-042b-4431-a61f-d03295e5f76e | AZURE_ARM | 315 | 2018-10-19 16:59:40
-AliCloud - Dev | 5976820284870875 | ALICLOUD | 95 | 2019-01-31 15:31:26
-depthtest-highest | depthtest-highest | GCE | 101 | 2019-02-21 16:16:44
+AWS Sales Account | 12345667 | AWS | 1157 | 2016-03-29 16:31:48
+DivvyCloud QA RO | 12345667 | AWS | 3692 | 2016-03-30 17:09:27
+Acme Corp Development | 12345667 | AWS | 448 | 2016-04-05 14:52:24
+AWS Master | 12345667 | AWS | 898 | 2017-10-22 11:11:17
+Azure Sandbox | 590212345667a61f-d03295e5f76e | AZURE_ARM | 315 | 2018-10-19 16:59:40
+AliCloud - Dev | 12345667 | ALICLOUD | 95 | 2019-01-31 15:31:26
+depthtest | depthghest | GCE | 101 | 2019-02-21 16:16:44
 
 Setup / running the script:
 The script can be ran from any system that has access to the divvycloud UI
