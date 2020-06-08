@@ -23,6 +23,8 @@ import json
 import requests
 import getpass
 
+requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+
 # Username/password to authenticate against the API
 username = ""
 password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
@@ -49,6 +51,7 @@ login_url = base_url + '/v2/public/user/login'
 def get_auth_token():
     response = requests.post(
         url=login_url,
+        verify=False,
         data=json.dumps({"username": username, "password": passwd}),
         headers={
             'Content-Type': 'application/json;charset=UTF-8',
@@ -76,6 +79,7 @@ def get_account_list():
     response = requests.get(
         url=base_url + '/v2/public/clouds/list',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()    

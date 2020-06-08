@@ -4,6 +4,9 @@ import json
 import requests
 import getpass
 
+requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+
+
 # # Username/password to authenticate against the API
 # username = "alex"
 # password = "DivvyCloud1!" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
@@ -17,8 +20,6 @@ password = "" # Leave this blank if you don't want it in plaintext and it'll pro
 
 # API URL
 base_url = ""
-
-
 
 # Param validation
 if not username:
@@ -39,6 +40,7 @@ login_url = base_url + '/v2/public/user/login'
 def get_auth_token():
     response = requests.post(
         url=login_url,
+        verify=False,
         data=json.dumps({"username": username, "password": passwd}),
         headers={
             'Content-Type': 'application/json;charset=UTF-8',
@@ -61,6 +63,7 @@ def get_clouds():
     response = requests.post(
         url=base_url + '/v2/public/clouds/list',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()    
@@ -71,6 +74,7 @@ def remove_account(account_id):
     response = requests.post(
         url=base_url + '/v2/public/cloud/' + account_id + '/delete',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response #.json()        

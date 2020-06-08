@@ -6,6 +6,8 @@ import requests
 import getpass
 from collections import defaultdict
 
+requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+
 # Username/password to authenticate against the API
 username = ''
 password = ''
@@ -44,6 +46,7 @@ insights_url = '/v2/public/insights/list'
 def get_auth_token():
     response = requests.post(
         url=login_url,
+        verify=False,
         data=json.dumps({"username": username, "password": password}),
         headers={
             'Content-Type': 'application/json;charset=UTF-8',
@@ -55,6 +58,7 @@ auth_token = get_auth_token()
 def get_info(url):
     response = requests.get(
         url=base_url + url,
+        verify=False,
         headers={
             'Content-Type': 'application/json;charset=UTF-8',
             'Accept': 'application/json',

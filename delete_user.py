@@ -5,6 +5,9 @@ import requests
 import getpass
 import csv
 
+requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+
+
 # Username/password to authenticate against the API
 username = ""
 password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 

@@ -59,8 +59,7 @@ def get_bot_history():
         "offset":0,
         "order_by":"start_time DESC"
     }
-
-
+    
     response = requests.post(
             url=base_url + '/v2/prototype/scheduled_events/history/list',
         verify=False,

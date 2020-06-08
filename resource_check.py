@@ -6,6 +6,8 @@ import requests
 import getpass
 import time
 
+requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+
 # Instance ID and region for the instance
 instance_id = "i-003014f07c517c6abc"
 instance_region = "us-east-1"
@@ -38,6 +40,7 @@ login_url = base_url + '/v2/public/user/login'
 def get_auth_token():
     response = requests.post(
         url=login_url,
+        verify=False,
         data=json.dumps({"username": username, "password": passwd}),
         headers={
             'Content-Type': 'application/json;charset=UTF-8',
@@ -59,6 +62,7 @@ def check_for_resource(resource_id):
     response = requests.get(
         url=base_url + '/v2/public/resource/' + resource_id + '/detail',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     
@@ -74,6 +78,7 @@ def check_for_violation(resource_id):
     response = requests.get(
         url=base_url + '/v2/public/insights/' + resource_id + '/violations/get',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()    

@@ -51,7 +51,7 @@ login_url = base_url + '/v2/public/user/login'
 # Shorthand helper function
 def get_auth_token():
     response = requests.post(
-            url=login_url,
+        url=login_url,
         verify=False,
         data=json.dumps({"username": username, "password": passwd}),
         headers={

@@ -4,6 +4,9 @@ import json
 import requests
 import getpass
 
+requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+
+
 ######################
 ######################
 # PARAMETERS 
@@ -83,6 +86,7 @@ login_url = base_url + '/v2/public/user/login'
 def get_auth_token():
     response = requests.post(
         url=login_url,
+        verify=False,
         data=json.dumps({"username": username, "password": passwd}),
         headers={
             'Content-Type': 'application/json;charset=UTF-8',
@@ -107,6 +111,7 @@ def create_collection():
     response = requests.post(
         url=base_url + '/v2/datacollections/',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()    

@@ -44,6 +44,9 @@ import json
 import requests
 import getpass
 
+requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+
+
 # Username/password to authenticate against the API
 username = ""
 password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
@@ -126,6 +129,7 @@ def create_resource_group():
     response = requests.post(
         url=base_url + '/v2/public/resourcegroup/create',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()    
@@ -152,6 +156,7 @@ def add_resource_to_group(resource_group_full_id):
     response = requests.post(
         url=base_url + '/v2/prototype/resourcegroups/resources/add',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()    
@@ -166,6 +171,7 @@ def add_resource_to_group(resource_group_full_id):
 def get_bot_info(bot_id):
     response = requests.get(
         url=base_url + '/v2/public/botfactory/divvybot:1:' + bot_id + '/get',
+        verify=False,
         headers=headers
         )
     return response.json()    
@@ -174,6 +180,7 @@ def get_bot_info(bot_id):
 def get_insight_info(source,insight_number):
     response = requests.get(
         url=base_url + '/v2/public/insights/' + insight_number + '/' + source,
+        verify=False,
         headers=headers
         )
     return response.json()    
@@ -193,6 +200,7 @@ def add_exemption(exemption_list,source):
     response = requests.post(
         url=base_url + '/v2/public/insights/' + insight_number + '/set_exemptions',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response    
@@ -231,6 +239,7 @@ def get_scheduled_events(bot_id):
     response = requests.post(
         url=base_url + '/v2/prototype/scheduled_events/get',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()
@@ -277,6 +286,7 @@ def remove_scheduled_events(events_to_remove):
     response = requests.post(
         url=base_url + '/v2/prototype/scheduled_events/execute_action',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response

@@ -60,6 +60,8 @@ import getpass
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
+requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+
 # Username/password to authenticate against the API
 username = ""
 password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
@@ -92,6 +94,7 @@ login_url = base_url + '/v2/public/user/login'
 def get_auth_token():
     response = requests.post(
         url=login_url,
+        verify=False,
         data=json.dumps({"username": username, "password": passwd}),
         headers={
             'Content-Type': 'application/json;charset=UTF-8',
@@ -110,10 +113,10 @@ headers = {
 # Get User info
 def get_users():
     data = {}
-
     response = requests.get(
         url=base_url + '/v2/public/users/list',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()    
@@ -124,6 +127,7 @@ def get_group_info(user_id):
     response = requests.post(
         url=base_url + '/v2/prototype/user/divvyuser:' + user_id + ':/groups/list',
         data=json.dumps(data),
+        verify=False,
         headers=headers
         )
     return response.json()        
