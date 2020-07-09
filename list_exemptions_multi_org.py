@@ -7,11 +7,11 @@ import getpass
 requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
 
 # Username/password to authenticate against the API
-username = ""
-password = "T" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+username = "alexc"
+password = "63JtLkVcap[SF>kT}T" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URL
-base_url = ""
+base_url = "https://sales-demo.divvycloud.com"
 
 # Param validation
 if not username:
@@ -49,7 +49,29 @@ headers = {
     'X-Auth-Token': auth_token
 }
 
+# Get Exemption info
+
 # Get Org info
+def get_orgs():
+    data = {}
+    response = requests.get(
+        url=base_url + '/v2/prototype/domain/organizations/detail/get',
+        data=json.dumps(data),
+        verify=False,
+        headers=headers
+        )
+    return response.json()    
+
+def switch_org(name):
+    data = {"organization_name": name }
+    response = requests.post(
+        url=base_url + '/v2/prototype/domain/switch_organization',
+        data=json.dumps(data),
+        verify=False,
+        headers=headers
+        )
+    return response
+
 def get_exemptions():
     data = {"search":"","pack":None,"badges":[],"badge_filter_operator":"OR"}
     response = requests.post(
@@ -60,7 +82,31 @@ def get_exemptions():
         )
     return response.json()    
 
-# Create the pack
-exemption_info = get_exemptions()
-print(exemption_info)
+# List all orgs and get the org names
+org_list = get_orgs()['organizations']
+
+print("List of organizations we're printing exemptions for: ")
+for org in org_list:
+    print(org['name'])
+
+print("===================================")
+
+for org in org_list:
+    name = org['name']
+    print("Switching to org " + name)
+    switch_org(name)
+
+    print("Exemptions for org " + name + ":")
+    print(get_exemptions())
+
+    print ("\n")
+    print("===================================")
+
+
+
+
+
+# # Create the pack
+# exemption_info = get_exemptions()
+# print(exemption_info)
 
