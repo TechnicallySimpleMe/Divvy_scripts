@@ -7,11 +7,11 @@ import getpass
 requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
 
 # Username/password to authenticate against the API
-username = "alexc"
-password = "63JtLkVcap[SF>kT}T" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+username = ""
+password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URL
-base_url = "https://sales-demo.divvycloud.com"
+base_url = ""
 
 # Param validation
 if not username:
@@ -101,12 +101,4 @@ for org in org_list:
 
     print ("\n")
     print("===================================")
-
-
-
-
-
-# # Create the pack
-# exemption_info = get_exemptions()
-# print(exemption_info)
 
