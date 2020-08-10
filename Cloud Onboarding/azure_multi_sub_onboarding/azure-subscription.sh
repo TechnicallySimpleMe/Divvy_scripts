@@ -19,7 +19,17 @@
 echo ""
 read -p "Base URL (EX: http://localhost:8001 or http://45.59.252.4:8001): " BASE_URL
 read -p "DivvyCloud Username: " username
-read -s -p "DivvyCloud Password: " password
+read -p "DivvyCloud Password: " -s password
+
+while true; do
+    read -p "Do you want to onboard these subscriptions in read-only? (n creates read-write permissions) (y/n)" yn
+    case $yn in
+        [Yy]* ) PERMISSIONS="readonly"; break;;
+        [Nn]* ) PERMISSIONS="readwrite"; break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 echo ""
 
 # Get session token (just need it once)
@@ -41,6 +51,29 @@ az account clear
 # Log into Azure again even though CloudShell logs you in automatically. There's a bug that doesn't let you to do everything you need without reauthenticating
 echo Logging into Azure
 az login
+
+echo Creating the custom DivvyCloud role
+
+
+# Put the role info into a file
+if [ "$PERMISSIONS" = "readonly" ]; then
+    # READER BONUS ROLE
+    JSON='{"Name":"DivvyCloud Reader Plus","Id":null,"IsCustom":true,"Description":"Provides read-only access to all Azure resources plus some additional permissions not covered by the built-in Reader role.","Actions":["*/read","Microsoft.Storage/storageAccounts/listkeys/action","Microsoft.Web/sites/config/list/Action","Microsoft.Web/sites/slots/config/list/Action"],"NotActions":[],"AssignableScopes":[SUBSCRIPTIONS]}'
+elif [ "$PERMISSIONS" = "readwrite" ]; then
+    # Power User:
+    JSON='{"Name":"DivvyCloud Power User","Id":null,"IsCustom":true,"Description":"Provides full access to resources supported by DivvyCloud.","Actions":["Microsoft.Advisor/*","Microsoft.Authorization/*","Microsoft.Cache/*","Microsoft.Compute/*","Microsoft.ContainerInstance/*","Microsoft.ContainerRegistry/*","Microsoft.ContainerService/*","Microsoft.DataLakeStore/*","Microsoft.DBforMariaDB/*","Microsoft.DBforMySQL/*","Microsoft.DBforPostgreSQL/*","Microsoft.DocumentDB/*","Microsoft.EventHub/*","Microsoft.HDInsight/*","Microsoft.Insights/*","Microsoft.KeyVault/*","Microsoft.Network/*","Microsoft.Resources/*","Microsoft.Security/*","Microsoft.Sql/*","Microsoft.Storage/*","Microsoft.Web/*"],"NotActions":[],"AssignableScopes":[SUBSCRIPTIONS]}'
+fi
+
+echo $JSON > /tmp/custom_role.json
+
+#Get the list of subscriptions and put it into an array
+SUB_LIST=`az account list --query '[].{Id:id}' --output tsv | xargs | awk '{print "\"/subscriptions/" $0 "\""}' | sed s/\ /'\",\"\/subscriptions\/'/g`
+
+# Update the role info to be scoped to the roles we're onboarding
+sed -i "s|SUBSCRIPTIONS|$SUB_LIST|g" /tmp/custom_role.json
+
+# Create the custom role
+az role definition create --role-definition /tmp/custom_role.json
 
 echo Building list of Azure Subscriptions to onboard
 
@@ -96,12 +129,31 @@ az account list --query '[].{Id:id}' --output tsv | while read -r SUB_ID ; do
     echo Sleeping 60 - waiting for app registration permissions to propagate
     sleep 60 ## If you try to run the next command too quickly, it'll fail
 
-    # Add the "Reader" role permissions to your App Registration
-    az role assignment create \
-    --assignee $APP_ID \
-    --role "Reader" \
-    --scope $SCOPE \
-    --subscription $SUB_ID
+
+    # Attach role permissions depending on what permissions we need
+    if [ "$PERMISSIONS" = "readonly" ]; then
+        # Add the "Reader" role permissions to your App Registration
+        az role assignment create \
+        --assignee $APP_ID \
+        --role "Reader" \
+        --scope $SCOPE \
+        --subscription $SUB_ID
+
+        # Add the "Custom reader plus" role permissions to your App Registration
+        az role assignment create \
+        --assignee $APP_ID \
+        --role "DivvyCloud Reader Plus" \
+        --scope $SCOPE \
+        --subscription $SUB_ID
+
+    elif [ "$PERMISSIONS" = "readwrite" ]; then
+        # Add the "Custom read/write" role permissions to your App Registration
+        az role assignment create \
+        --assignee $APP_ID \
+        --role "DivvyCloud Power User" \
+        --scope $SCOPE \
+        --subscription $SUB_ID
+    fi
 
 
     echo ========================
