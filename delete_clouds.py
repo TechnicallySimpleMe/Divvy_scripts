@@ -1,4 +1,4 @@
-# Delete all GCP projects that match a certain string
+# Delete duplicate AWWS projects
 
 import json
 import requests
