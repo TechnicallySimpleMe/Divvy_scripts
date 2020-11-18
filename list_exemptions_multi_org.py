@@ -1,18 +1,10 @@
-# Delete duplicate AWWS projects
+# Script to list all organizations in DivvyCloudf
 
 import json
 import requests
 import getpass
 
 requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
-
-
-# # Username/password to authenticate against the API
-# username = "alex"
-# password = "DivvyCloud1!" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
-
-# # API URL
-# base_url = "http://3.219.214.104:8001"
 
 # Username/password to authenticate against the API
 username = ""
@@ -39,6 +31,7 @@ login_url = base_url + '/v2/public/user/login'
 # Shorthand helper function
 def get_auth_token():
     response = requests.post(
+
         url=login_url,
         verify=False,
         data=json.dumps({"username": username, "password": passwd}),
@@ -56,43 +49,56 @@ headers = {
     'X-Auth-Token': auth_token
 }
 
-# Get Org info
-def get_clouds():
-    data = {}
+# Get Exemption info
 
-    response = requests.post(
-        url=base_url + '/v2/public/clouds/list',
+# Get Org info
+def get_orgs():
+    data = {}
+    response = requests.get(
+        url=base_url + '/v2/prototype/domain/organizations/detail/get',
         data=json.dumps(data),
         verify=False,
         headers=headers
         )
     return response.json()    
 
-# Get Org info
-def remove_account(account_id):
-    data = {}
+def switch_org(name):
+    data = {"organization_name": name }
     response = requests.post(
-        url=base_url + '/v2/public/cloud/' + account_id + '/delete',
+        url=base_url + '/v2/prototype/domain/switch_organization',
         data=json.dumps(data),
         verify=False,
         headers=headers
         )
-    return response #.json()        
+    return response
 
-# list clouds and look for gcp
-while True:
-    clouds_list = get_clouds()
-    if len(clouds_list['clouds']) > 0:
-        for cloud in  clouds_list['clouds']: 
-            if cloud['cloud_type_id'] == 'GCE':
-                if "sys-" in cloud['account_id']:
-                    print(cloud)
-                    account_id = cloud['group_resource_id']
-                    remove_account(account_id)
-    else:
-        print("All bad projects removed!")
-        break
+def get_exemptions():
+    data = {"search":"","pack":None,"badges":[],"badge_filter_operator":"OR"}
+    response = requests.post(
+        url=base_url + '/v2/public/exemptions/list?page=1&page_size=2000',
+        data=json.dumps(data),
+        verify=False,
+        headers=headers
+        )
+    return response.json()    
 
+# List all orgs and get the org names
+org_list = get_orgs()['organizations']
 
+print("List of organizations we're printing exemptions for: ")
+for org in org_list:
+    print(org['name'])
 
+print("===================================")
+
+for org in org_list:
+    name = org['name']
+    print("Switching to org " + name)
+    switch_org(name)
+
+    print("Exemptions for org " + name + ":")
+    print(get_exemptions())
+
+    print ("\n")
+    print("===================================")
 
