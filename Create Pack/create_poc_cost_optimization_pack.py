@@ -50,6 +50,30 @@ login_url = base_url + '/v2/public/user/login'
 ### Custom insights to add
 insight_configs = []
 
+# Instances running 24x7
+insight_configs.append({
+  "name": "Instances running 24x7",
+  "description": "Instances that have been on for a week",
+  "resource_types": [
+    "instance"
+  ],
+  "filters": [
+    {
+      "name": "divvy.query.instances_running_24x7",
+      "config": {
+        "days": 7
+      },
+      "collections": {}
+    }
+  ],
+  "scopes": [],
+  "severity": 1,
+  "owner_resource_id": null,
+  "template_id": null,
+  "badges": null,
+  "badge_filter_operator": null
+})
+
 # Instances above 4 cores 
 insight_configs.append({
     "name": "Instances above 4 cores",
