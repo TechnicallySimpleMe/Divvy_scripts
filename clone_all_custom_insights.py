@@ -12,36 +12,42 @@ import json
 import requests
 import getpass
 
-
-######### Prod ENV
-
 # Username/password to authenticate against the API
-username = ""
-password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+old_env_username = "alexc"
+old_env_password = "xTm=cT8r+AvjwjhFT" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+new_env_username = "alex.corstorphine"
+new_env_password = "cloudymoon232" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
-# API URL
-base_url = "https://sales-demo.divvycloud.com"
+# API URLs
+old_env_base_url = "https://sales-demo.divvycloud.com"
+new_env_base_url = "https://sales-preview.divvycloud.com"
 
 # Param validation
-if not username:
-    username = input("Username: ")
+if not old_env_base_url or not new_env_base_url:
+    print("Please set the base URLs in the paramters. Exiting")
+    exit()
 
-if not password:
-    passwd = getpass.getpass('Password:')
+if not old_env_username:
+    old_env_username = input("Original Environment Username: ")
+
+if not old_env_password:
+    old_env_passwd = getpass.getpass('Original Environment Password:')
 else:
-    passwd = password
+    old_env_passwd = old_env_password
 
-if not base_url:
-    base_url = input("Base URL (EX: http://localhost:8001 or http://45.59.252.4:8001): ")
+if not new_env_username:
+    new_env_username = input("New Environment Username: ")
 
-# Full URL
-login_url = base_url + '/v2/public/user/login'
+if not new_env_password:
+    new_env_passwd = getpass.getpass('New Environment Password:')
+else:
+    new_env_passwd = new_env_password
 
 
 # Shorthand helper function
-def get_auth_token():
+def get_auth_token(username,passwd,base_url):
     response = requests.post(
-        url=login_url,
+        url=base_url + '/v2/public/user/login',
         data=json.dumps({"username": username, "password": passwd}),
         headers={
             'Content-Type': 'application/json;charset=UTF-8',
@@ -49,16 +55,25 @@ def get_auth_token():
         })
     return response.json()['session_id']
 
-auth_token = get_auth_token()
-headers = {
+# Get new auth tokens with new creds
+old_env_auth_token = get_auth_token(old_env_username,old_env_passwd,old_env_base_url)
+new_env_auth_token = get_auth_token(new_env_username,new_env_passwd,new_env_base_url)
+
+
+old_env_headers = {
     'Content-Type': 'application/json;charset=UTF-8',
     'Accept': 'application/json',
-    'X-Auth-Token': auth_token
+    'X-Auth-Token': old_env_auth_token
 }
 
+new_env_headers = {
+    'Content-Type': 'application/json;charset=UTF-8',
+    'Accept': 'application/json',
+    'X-Auth-Token': new_env_auth_token
+}
 
 # list all insights
-def list_insights():
+def list_insights(headers,base_url):
     data = {}
     response = requests.get(
         url=base_url + '/v2/public/insights/list',
@@ -67,9 +82,8 @@ def list_insights():
         )
     return response.json()    
 
-
 # Create a custom insight
-def create_insight(insight_config):
+def create_insight(insight_config,headers,base_url):
     response = requests.post(
         url=base_url + '/v2/public/insights/create',
         data=json.dumps(insight_config),
@@ -77,28 +91,36 @@ def create_insight(insight_config):
         )
     return response.json()        
 
-
 # Add notes to insight
-def add_insight_notes(insight_id,description):
+def add_insight_notes(insight_id,description,headers,base_url):
     data = {
         "notes": description
     }
-
     response = requests.post(
         url=base_url + '/v2/public/insights/' + str(insight_id) + '/notes/update',
         data=json.dumps(data),
         headers=headers
         )
-    return response
-# No response expected   
+    return response # No response expected   
+
+
+# # Add notes to insight
+# def list_packs(headers,base_url):
+#     response = requests.get(
+#         url=base_url + '/v2/public/insights/packs/list',
+#         headers=headers
+#         )
+#     print(response)
+#     return response.json # No response expected   
+# list_packs(old_env_headers,old_env_base_url)
+# exit()    
 
 print("Generating list of custom insights")
-all_insights = list_insights()
+all_insights = list_insights(old_env_headers,old_env_base_url)
 custom_insights = []
 for insight in all_insights:
     if insight["source"] == "custom":
         #Clean up unneeded params
-        insight['name'] = "TESTTTTTTTT"
         del insight['by_cloud'] 
         del insight['by_resource_group'] 
         del insight['insight_id']
@@ -118,59 +140,14 @@ for insight in all_insights:
         del insight['bots']        
         custom_insights.append(insight)
   
-
-
 print("Adding insights to new environment")
 
-# Username/password to authenticate against the API
-username = ""
-password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
-
-# API URL
-base_url = "https://sales-preview.divvycloud.com"
-
-# Param validation
-if not username:
-    username = input("Username: ")
-
-if not password:
-    passwd = getpass.getpass('Password:')
-else:
-    passwd = password
-
-if not base_url:
-    base_url = input("Base URL (EX: http://localhost:8001 or http://45.59.252.4:8001): ")
-
-# Full URL
-login_url = base_url + '/v2/public/user/login'
-
-# Shorthand helper function
-def get_auth_token():
-    response = requests.post(
-        url=login_url,
-        data=json.dumps({"username": username, "password": passwd}),
-        headers={
-            'Content-Type': 'application/json;charset=UTF-8',
-            'Accept': 'application/json'
-        })
-    return response.json()['session_id']
-
-auth_token = get_auth_token()
-headers = {
-    'Content-Type': 'application/json;charset=UTF-8',
-    'Accept': 'application/json',
-    'X-Auth-Token': auth_token
-}
-
-
-print("Creating custom insights")
 # Loop through insight_configs and add a filter for each
 custom_insight_ids = []
 for insight in custom_insights:
     print("Creating new insight: " + insight['name'])
-    new_insight_info = create_insight(insight)
+    new_insight_info = create_insight(insight,new_env_headers,new_env_base_url)
     custom_insight_ids.append(new_insight_info['insight_id'])
 
     # Add notes to the insight
-    add_insight_notes(new_insight_info['insight_id'],insight['description'])  
-    break
+    add_insight_notes(new_insight_info['insight_id'],insight['description'],new_env_headers,new_env_base_url)  
