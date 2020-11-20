@@ -16,20 +16,15 @@ import getpass
 
 requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
 
-
 # Username/password to authenticate against the API
-old_env_username = "alexc"
-old_env_password = "xTm=cT8r+AvjwjhFT" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
-# new_env_username = "alexc"
-# new_env_password = "alexcalexcalexc1!Q" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
-# old_env_username = "alexc"
-# old_env_password = "alexcalexcalexc1!Q" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
-new_env_username = "alex.corstorphine"
-new_env_password = "cloudymoon232" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+old_env_username = ""
+old_env_password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+new_env_username = ""
+new_env_password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URLs
-old_env_base_url = "https://sales-demo.divvycloud.com"
-new_env_base_url = "https://sales-preview.divvycloud.com/"
+old_env_base_url = ""
+new_env_base_url = ""
 
 # Param validation
 if not old_env_base_url or not new_env_base_url:
