@@ -1,12 +1,15 @@
-# Script to create a "best practices pack" and add insights to it
-# Update packaged_insight_ids with the IDs of existing insights. 
-# Add new filters to the insight_configs array
+# Script to clone insights and packs from one Divvy install to another.
 
 # How to run:
 # This can be ran from any system that has access to the DivvyCloud instance (including the one that's running Divvy)
+
+# For Mac:
 # sudo pip3 install requests
-# curl -o create_best_practices_pack.py https://raw.githubusercontent.com/alpalwal/Divvy/master/Prod/scripts/Create%20Pack/create_poc_cost_optimization_pack.py
-# python3 create_best_practices_pack.py
+# python3 clone_all_custom_insights.py
+
+# For PC:
+# python.exe -m pip install requests
+# python.exe clone_all_custom_insights.py
 
 # INSIGHT SCOPES ARE NOT SAVED
 
@@ -14,7 +17,7 @@ import json
 import requests
 import getpass
 
-requests.packages.urllib3.disable_warnings() # verify=False throws warnings otherwise
+requests.packages.urllib3.disable_warnings() # throws warnings otherwise
 
 # Username/password to authenticate against the API
 old_env_username = ""
@@ -28,7 +31,7 @@ new_env_base_url = ""
 
 # Param validation
 if not old_env_base_url or not new_env_base_url:
-    print("Please set the base URLs in the paramters. Exiting")
+    print("Please set the base URLs in the paramters. (Lines ~29/30) Exiting")
     exit()
 
 if not old_env_username:
@@ -123,13 +126,6 @@ def list_packs(headers,base_url):
         )
     return response.json() # No response expected   
 
-packs=list_packs(old_env_headers,old_env_base_url)
-custom_packs = []
-for pack in packs:
-    if pack['source'] == "custom":
-        print("Custom pack found - " + pack['name'])
-        custom_packs.append(pack)
-
 # Create a new pack
 def create_pack(pack,headers,base_url):
     data = {
@@ -149,7 +145,6 @@ def create_pack(pack,headers,base_url):
         verify=False
         )
     return response.json()    
-
 
 # Add an insight to the pack
 def add_insight_to_pack(pack_info,custom_insight_ids,headers,base_url):
@@ -172,14 +167,19 @@ def add_insight_to_pack(pack_info,custom_insight_ids,headers,base_url):
     return response#.json()    
 
 
+packs=list_packs(old_env_headers,old_env_base_url)
+custom_packs = []
+for pack in packs:
+    if pack['source'] == "custom":
+        print("Custom pack found - " + pack['name'])
+        custom_packs.append(pack)
+
 print("Generating list of custom insights")
 all_insights = list_insights(old_env_headers,old_env_base_url)
 custom_insights = []
 for insight in all_insights:
     if insight["source"] == "custom":
         #Clean up unneeded params
-        del insight['by_cloud'] 
-        del insight['by_resource_group'] 
         del insight['owner_resource_id']
         del insight['organization_id']
         del insight['resource_group_blacklist']
