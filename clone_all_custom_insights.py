@@ -225,8 +225,11 @@ for pack in custom_packs:
     for insight_id_in_custom_pack in pack['custom']:
         for old_custom_insight in custom_insights:
             if insight_id_in_custom_pack == old_custom_insight['insight_id']:
-                print("Found custom insight to add to pack. Name: " + old_custom_insight['name'])
-                insights_to_add.append(old_custom_insight['new_insight_id'])
+                try:
+                    print("Found custom insight to add to pack. Name: " + old_custom_insight['name'])
+                    insights_to_add.append(old_custom_insight['new_insight_id'])
+                except KeyError:
+                    print("Skipping insight that wasn't created earlier. " + str(old_custom_insight))
 
     print("")
     if insights_to_add:
