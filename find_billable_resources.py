@@ -7,6 +7,8 @@
 
 import boto3 
 import sys
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 regions = ["us-east-2","us-east-1","us-west-1","us-west-2","ap-south-1","ap-northeast-2","ap-southeast-1","ap-southeast-2","ap-northeast-1","ca-central-1","eu-central-1","eu-west-1","eu-west-2","eu-west-3","eu-north-1","sa-east-1"]
 
@@ -29,7 +31,7 @@ session = boto3.session.Session(profile_name=profile)
 for region in regions:
     ## EC2
     print("### Starting EC2 List for region: " + region + " ###")
-    ec2client = session.client('ec2', region_name=region)
+    ec2client = session.client('ec2', region_name=region, verify=False)
     response = ec2client.describe_instances()
     for reservation in response["Reservations"]:
         for instance in reservation["Instances"]:
@@ -38,7 +40,7 @@ for region in regions:
 
     ## RDS
     print("### Starting RDS List for region: " + region + " ###")
-    rds = session.client('rds', region_name=region)
+    rds = session.client('rds', region_name=region, verify=False)
     response = rds.describe_db_instances()
     for db_instance in response['DBInstances']:
         print (db_instance['Endpoint']['Address'])
@@ -46,7 +48,7 @@ for region in regions:
 
     ## Redshift
     print("### Starting Redshift List for region: " + region + " ###")
-    redshiftclient = session.client('redshift', region_name=region)
+    redshiftclient = session.client('redshift', region_name=region, verify=False)
     response = redshiftclient.describe_clusters()
     for cluster in response["Clusters"]:
         redshift_cluster_list.append(cluster['ClusterIdentifier'] + " , " + region)
@@ -54,7 +56,7 @@ for region in regions:
 
     ## Elasticache
     print("### Starting Elasticache List for region: " + region + " ###")
-    elasticacheclient = session.client('elasticache', region_name=region)
+    elasticacheclient = session.client('elasticache', region_name=region, verify=False)
     response = elasticacheclient.describe_cache_clusters()
     for cluster in response["CacheClusters"]:
         elasticache_cluster_list.append(cluster['CacheClusterId'] + " , " + region)
@@ -62,7 +64,7 @@ for region in regions:
 
     ## DynamoDB
     print("### Starting DynamoDB List for region: " + region + " ###")
-    dynamodbclient = session.client('dynamodb', region_name=region)
+    dynamodbclient = session.client('dynamodb', region_name=region, verify=False)
     response = dynamodbclient.list_tables()
     for table in response["TableNames"]:
         dynamodb_table_list.append(table + " , " + region)
@@ -70,7 +72,7 @@ for region in regions:
 
     ## ElasticSearch
     print("### Starting ElasticSearch List for region: " + region + " ###")
-    elasticsearchclient = session.client('es', region_name=region)
+    elasticsearchclient = session.client('es', region_name=region, verify=False)
     response = elasticsearchclient.list_domain_names()
     for domain in response["DomainNames"]:
         elasticsearch_domain_list.append(domain['DomainName'] + " , " + region)
@@ -81,7 +83,7 @@ for region in regions:
     workspaces_regions = ["us-east-1","us-west-2","ap-northeast-2","ap-southeast-1","ap-southeast-2","ap-northeast-1","ca-central-1","eu-central-1","eu-west-1","eu-west-2","sa-east-1"]
     if region in workspaces_regions:
         print("### Starting Workspaces List for region: " + region + " ###")
-        workspacesclient = session.client('workspaces', region_name=region)
+        workspacesclient = session.client('workspaces', region_name=region, verify=False)
         response = workspacesclient.describe_workspaces()
         for workspace in response["Workspaces"]:
             workspaces_list.append(workspace['WorkspaceId'] + " , " + region)
@@ -94,7 +96,7 @@ for region in regions:
     documentdb_regions = ["us-east-1","us-west-2","ap-south-1","ap-northeast-2","ap-southeast-2","ap-northeast-1","ca-central-1","eu-central-1","eu-west-1","eu-west-2"]
     if region in documentdb_regions:
         print("### Starting DocumentDB List for region: " + region + " ###")
-        documentdbclient = session.client('docdb', region_name=region)
+        documentdbclient = session.client('docdb', region_name=region, verify=False)
         response = documentdbclient.describe_db_clusters()
         for documentdb in response["DBClusters"]:
             documentdb_list.append(documentdb['DBClusterIdentifier'] + " , " + region)
