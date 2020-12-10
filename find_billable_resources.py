@@ -16,7 +16,7 @@ instance_list = []
 rds_list = []
 redshift_cluster_list = []
 elasticache_cluster_list = []
-dynamodb_table_list = []
+# dynamodb_table_list = []
 elasticsearch_domain_list = []
 workspaces_list = []
 documentdb_list = []
@@ -62,13 +62,13 @@ for region in regions:
         elasticache_cluster_list.append(cluster['CacheClusterId'] + " , " + region)
         print(cluster['CacheClusterId'] + " , " + region)
 
-    ## DynamoDB
-    print("### Starting DynamoDB List for region: " + region + " ###")
-    dynamodbclient = session.client('dynamodb', region_name=region, verify=False)
-    response = dynamodbclient.list_tables()
-    for table in response["TableNames"]:
-        dynamodb_table_list.append(table + " , " + region)
-        print(table + " , " + region)
+    # ## DynamoDB
+    # print("### Starting DynamoDB List for region: " + region + " ###")
+    # dynamodbclient = session.client('dynamodb', region_name=region, verify=False)
+    # response = dynamodbclient.list_tables()
+    # for table in response["TableNames"]:
+    #     dynamodb_table_list.append(table + " , " + region)
+    #     print(table + " , " + region)
 
     ## ElasticSearch
     print("### Starting ElasticSearch List for region: " + region + " ###")
@@ -108,11 +108,10 @@ instance_count = len(instance_list)
 rds_count = len(rds_list)
 redshift_cluster_count = len(redshift_cluster_list)
 elasticache_cluster_count = len(elasticache_cluster_list)
-dynamodb_cluster_count = len(dynamodb_table_list)
+# dynamodb_cluster_count = len(dynamodb_table_list)
 elasticsearch_domain_count = len(elasticsearch_domain_list)
 workspaces_count = len(workspaces_list)
 documentdb_count = len(documentdb_list)
-# neptune_count = len(neptune_list)
 
 print("\n########### OVERALL COUNTS #############")
 
@@ -120,11 +119,11 @@ print("EC2 Instances in this account: " + str(instance_count))
 print("RDS Instances in this account: " + str(rds_count))
 print("Redshift Clusters in this account: " + str(redshift_cluster_count))
 print("Elasticache Clusters in this account: " + str(elasticache_cluster_count))
-print("DynamoDB Clusters in this account: " + str(dynamodb_cluster_count))
+# print("DynamoDB Clusters in this account: " + str(dynamodb_cluster_count))
 print("Elasticsearch Clusters in this account: " + str(elasticsearch_domain_count))
 print("Workspaces in this account: " + str(workspaces_count))
 print("DocumentDBs in this account: " + str(documentdb_count))
 
-total_counts_list = [instance_count,rds_count,redshift_cluster_count,elasticache_cluster_count,dynamodb_cluster_count,elasticsearch_domain_count,workspaces_count,documentdb_count]
+total_counts_list = [instance_count,rds_count,redshift_cluster_count,elasticache_cluster_count,elasticsearch_domain_count,workspaces_count,documentdb_count]
 total_count = sum(total_counts_list)
 print("\n### TOTAL BILLABLE RESOURCE COUNT: " + str(total_count))

@@ -68,14 +68,14 @@ def elasticache(boto_session, region):
         print(f"{cluster['CacheClusterId']} , {region}")
     return elasticache_cluster_list
 
-def dynamodb(boto_session, region):
-    print("### Starting DynamoDB List for region: " + region + " ###")
-    dynamodbclient = boto_session.client('dynamodb', region_name=region)
-    response = dynamodbclient.list_tables()
-    for table in response["TableNames"]:
-        dynamodb_table_list.append(table + " , " + region)
-        print(f"{table} , {region}")
-    return dynamodb_table_list
+# def dynamodb(boto_session, region):
+#     print("### Starting DynamoDB List for region: " + region + " ###")
+#     dynamodbclient = boto_session.client('dynamodb', region_name=region)
+#     response = dynamodbclient.list_tables()
+#     for table in response["TableNames"]:
+#         dynamodb_table_list.append(table + " , " + region)
+#         print(f"{table} , {region}")
+#     return dynamodb_table_list
 
 def documentdb(boto_session, region):
     documentdb_regions = ["us-east-1","us-west-2"]
@@ -96,7 +96,7 @@ for account in account_id_list():
     rds_list = []
     redshift_cluster_list = []
     elasticache_cluster_list = []
-    dynamodb_table_list = []
+    # dynamodb_table_list = []
     elasticsearch_domain_list = []
     workspaces_list = []
     documentdb_list = []
@@ -107,7 +107,7 @@ for account in account_id_list():
             rds_list = rds(boto_session, region)
             redshift_cluster_list = redshift(boto_session, region)
             elasticache_cluster_list = elasticache(boto_session, region)
-            dynamodb_table_list = dynamodb(boto_session, region)
+            # dynamodb_table_list = dynamodb(boto_session, region)
             documentdb_list = documentdb(boto_session, region)
         except:
             print(f"Skipping {account} in {region}")
@@ -115,15 +115,15 @@ for account in account_id_list():
     rds_count = len(rds_list)
     redshift_cluster_count = len(redshift_cluster_list)
     elasticache_cluster_count = len(elasticache_cluster_list)
-    dynamodb_cluster_count = len(dynamodb_table_list)
+    # dynamodb_cluster_count = len(dynamodb_table_list)
     documentdb_count = len(documentdb_list)
     print("\n########### OVERALL COUNTS #############")
     print(f"EC2 Instances in this account: {instance_count}")
     print(f"RDS Instances in this account: {rds_count}")
     print(f"Redshift Clusters in this account: {redshift_cluster_count}")
     print(f"Elasticache Clusters in this account: {elasticache_cluster_count}")
-    print(f"DynamoDB Clusters in this account: {dynamodb_cluster_count}")
+    # print(f"DynamoDB Clusters in this account: {dynamodb_cluster_count}")
     print(f"DocumentDBs in this account: {documentdb_count}")
-    total_counts_list = [instance_count,rds_count,redshift_cluster_count,elasticache_cluster_count,dynamodb_cluster_count,documentdb_count]
+    total_counts_list = [instance_count,rds_count,redshift_cluster_count,elasticache_cluster_count,documentdb_count]
     total_count = sum(total_counts_list)
     print(f"\n### TOTAL BILLABLE RESOURCE COUNT: {total_count}")
