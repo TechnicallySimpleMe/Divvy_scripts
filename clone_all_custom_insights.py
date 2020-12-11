@@ -20,14 +20,14 @@ import getpass
 requests.packages.urllib3.disable_warnings() # throws warnings otherwise
 
 # Username/password to authenticate against the API
-old_env_username = ""
-old_env_password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
-new_env_username = ""
-new_env_password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+old_env_username = "alex.corstorphine"
+old_env_password = "cloudymoon232" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+new_env_username = "alexc"
+new_env_password = "alexcalexcalexc1!Q" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URLs
-old_env_base_url = ""
-new_env_base_url = ""
+old_env_base_url = "https://sales-preview.divvycloud.com"
+new_env_base_url = "https://ec2-18-209-180-65.compute-1.amazonaws.com"
 
 # Param validation
 if not old_env_base_url or not new_env_base_url:
@@ -166,6 +166,30 @@ def add_insight_to_pack(pack_info,custom_insight_ids,headers,base_url):
         )
     return response#.json()    
 
+# list all bots
+def list_bots(headers,base_url):
+    data = {"filters":[],"limit":500,"offset":0}
+
+    response = requests.post(
+        url=base_url + '/v2/public/botfactory/list',
+        data=json.dumps(data),
+        verify=False,
+        headers=headers
+        )
+    return response.json()
+
+# create bot
+def create_bot(bot_info,headers,base_url):
+    data = bot_info
+
+    response = requests.post(
+        url=base_url + '/v2/public/botfactory/bot/create',
+        data=json.dumps(data),
+        verify=False,
+        headers=headers
+        )
+    return response.json()
+
 
 packs=list_packs(old_env_headers,old_env_base_url)
 custom_packs = []
@@ -237,3 +261,61 @@ for pack in custom_packs:
         add_insight_to_pack(new_pack_info,insights_to_add,new_env_headers,new_env_base_url)
     else:
         print("No custom insights to add for this pack. Skipping")
+
+
+print("\nStarting bot duplication")
+
+# Create the pack
+old_env_bot_list = list_bots(old_env_headers,old_env_base_url)['bots']
+
+print("Number of bots to duplicate: " + str(len(old_env_bot_list)))
+
+for bot in old_env_bot_list:
+    print("Creating bot " + bot['name'])
+    if not bot['insight_id']:
+        new_insight_id = None
+    elif bot['insight_id'] == "backoffice":
+        new_insight_id = bot['insight_id']
+    elif bot['insight_id'] == "custom":
+        for old_custom_insight in custom_insights:
+            if bot ['insight_id'] == old_custom_insight['insight_id']:
+                try:
+                    new_insight_id = old_custom_insight['new_insight_id']
+                except KeyError:
+                    print("Error looking up old insight ID to link to the bot. Skipping.")
+                    continue
+
+    new_hookpoints = []
+    if bot['hookpoint_created'] == True:
+        new_hookpoints.append("divvycloud.resource.created")
+    if bot['hookpoint_tags_modified'] == True:
+        new_hookpoints.append("divvycloud.resource.tags_modified")
+    if bot['hookpoint_modified'] == True:
+        new_hookpoints.append("divvycloud.resource.modified")
+    if bot['hookpoint_destroyed'] == True:
+        new_hookpoints.append("divvycloud.resource.destroyed")
+
+    new_bot_info = {
+        "insight_id": new_insight_id,
+        "source": bot['source'],
+        "name": bot['name'],
+        "description": bot['description'],
+        "category": bot['category'],
+        "instructions": {
+            "groups": [],
+            "actions": bot['instructions']['actions'],
+            "resource_types": bot['instructions']['resource_types'],
+            "badges": [],
+            "hookpoints": new_hookpoints,
+            "filters": bot['instructions']['filters']
+        }
+    }
+    
+    try:
+        new_bot_output = create_bot(new_bot_info,new_env_headers,new_env_base_url)
+        if new_bot_output['date_created']:
+            print("Bot created successfully")
+    except error as e:
+        print("Unknown error. Skipping")
+        print(e)
+
