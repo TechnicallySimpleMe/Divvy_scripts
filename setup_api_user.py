@@ -78,9 +78,9 @@ def list_user_ids():
 # Create the API key from the authenticated user
 def create_key(user_id):
     data =  {
-    "user_id":user_id,
-    "key_length":32
-  }
+        "user_id":user_id,
+        "key_length":32
+    }
     response = requests.post(
         url=base_url + '/v2/public/apikey/create',
         data=json.dumps(data),
