@@ -295,27 +295,27 @@ for bot in old_env_bot_list:
     if bot['hookpoint_destroyed'] == True:
         new_hookpoints.append("divvycloud.resource.destroyed")
 
-    new_bot_info = {
-        "insight_id": new_insight_id,
-        "source": bot['source'],
-        "name": bot['name'],
-        "description": bot['description'],
-        "category": bot['category'],
-        "instructions": {
-            "groups": [],
-            "actions": bot['instructions']['actions'],
-            "resource_types": bot['instructions']['resource_types'],
-            "badges": [],
-            "hookpoints": new_hookpoints,
-            "filters": bot['instructions']['filters']
-        }
-    }
-    
     try:
+        new_bot_info = {
+            "insight_id": new_insight_id,
+            "source": bot['source'],
+            "name": bot['name'],
+            "description": bot['description'],
+            "category": bot['category'],
+            "instructions": {
+                "groups": [],
+                "actions": bot['instructions']['actions'],
+                "resource_types": bot['instructions']['resource_types'],
+                "badges": [],
+                "hookpoints": new_hookpoints,
+                "filters": bot['instructions']['filters']
+            }
+        }
+
         new_bot_output = create_bot(new_bot_info,new_env_headers,new_env_base_url)
         if new_bot_output['date_created']:
             print("Bot created successfully")
+
     except error as e:
-        print("Unknown error. Skipping")
         print(e)
 
