@@ -31,7 +31,7 @@ if not base_url:
 try:
     api_user_username = str(sys.argv[1])
 except:
-    print("No user input. Exiting. Usage: python setup_api_user_as_admin.py <username>")
+    print("No user input. Exiting. Usage: python setup_api_user_from_domain_admin.py <username>")
     exit()
 
 # Full URL
