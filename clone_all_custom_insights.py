@@ -20,14 +20,14 @@ import getpass
 requests.packages.urllib3.disable_warnings() # throws warnings otherwise
 
 # Username/password to authenticate against the API
-old_env_username = "alex.corstorphine"
-old_env_password = "cloudymoon232" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
-new_env_username = "alexc"
-new_env_password = "alexcalexcalexc1!Q" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+old_env_username = ""
+old_env_password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+new_env_username = ""
+new_env_password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URLs
-old_env_base_url = "https://sales-preview.divvycloud.com"
-new_env_base_url = "https://ec2-18-209-180-65.compute-1.amazonaws.com"
+old_env_base_url = ""
+new_env_base_url = ""
 
 # Param validation
 if not old_env_base_url or not new_env_base_url:
@@ -316,6 +316,7 @@ for bot in old_env_bot_list:
         if new_bot_output['date_created']:
             print("Bot created successfully")
 
-    except error as e:
+    except Exception as e:
+        print("Error while creating bot. Skipping")
         print(e)
 
