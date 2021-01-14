@@ -274,16 +274,21 @@ for bot in old_env_bot_list:
     print("Creating bot " + bot['name'])
     if not bot['insight_id']:
         new_insight_id = None
+        print(new_insight_id)
     elif bot['insight_id'] == "backoffice":
         new_insight_id = bot['insight_id']
+        print(new_insight_id)
     elif bot['insight_id'] == "custom":
         for old_custom_insight in custom_insights:
-            if bot ['insight_id'] == old_custom_insight['insight_id']:
+            if bot['insight_id'] == old_custom_insight['insight_id']:
                 try:
                     new_insight_id = old_custom_insight['new_insight_id']
+                    print(new_insight_id)
                 except KeyError:
                     print("Error looking up old insight ID to link to the bot. Skipping.")
                     continue
+    else:
+        print(bot['insight_id'])
 
     new_hookpoints = []
     if bot['hookpoint_created'] == True:
