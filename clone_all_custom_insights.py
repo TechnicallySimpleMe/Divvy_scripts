@@ -20,14 +20,14 @@ import getpass
 requests.packages.urllib3.disable_warnings() # throws warnings otherwise
 
 # Username/password to authenticate against the API
-old_env_username = ""
-old_env_password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
-new_env_username = ""
-new_env_password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+old_env_username = "alexc"
+old_env_password = "xTm=cT8r+AvjwjhFT" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+new_env_username = "alex.corstorphine"
+new_env_password = "cloudymoon232" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URLs
-old_env_base_url = ""
-new_env_base_url = ""
+old_env_base_url = "https://sales-demo.divvycloud.com"
+new_env_base_url = "https://sales-preview.divvycloud.com"
 
 # Param validation
 if not old_env_base_url or not new_env_base_url:
@@ -271,24 +271,22 @@ old_env_bot_list = list_bots(old_env_headers,old_env_base_url)['bots']
 print("Number of bots to duplicate: " + str(len(old_env_bot_list)))
 
 for bot in old_env_bot_list:
-    print("Creating bot " + bot['name'])
+    print("\nCreating bot " + bot['name'])
     if not bot['insight_id']:
         new_insight_id = None
-        print(new_insight_id)
-    elif bot['insight_id'] == "backoffice":
+    elif bot['source'] == "backoffice":
         new_insight_id = bot['insight_id']
-        print(new_insight_id)
-    elif bot['insight_id'] == "custom":
+    elif bot['source'] == "custom":
         for old_custom_insight in custom_insights:
             if bot['insight_id'] == old_custom_insight['insight_id']:
                 try:
                     new_insight_id = old_custom_insight['new_insight_id']
-                    print(new_insight_id)
+                    break
                 except KeyError:
                     print("Error looking up old insight ID to link to the bot. Skipping.")
-                    continue
+                    break
     else:
-        print(bot['insight_id'])
+        print(bot)
 
     new_hookpoints = []
     if bot['hookpoint_created'] == True:
