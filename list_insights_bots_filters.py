@@ -75,7 +75,7 @@ def lambda_handler(event, context):
 
     # # Build insights CSV
     with open(insights_path, 'w') as insightsfile:
-        headers = ['Name', 'Description', 'Default Severity (5 is high)', 'AWS', 'AZURE', 'GCP', 'ALICLOUD']
+        headers = ['Name', 'Description', 'Default Severity (5 is high)', 'AWS', 'AZURE', 'GCP', 'ALICLOUD', 'K8S', 'OCI']
         writer = csv.writer(insightsfile)
         packs = get_info('/v2/public/insights/packs/list')
         pack_ids = []
@@ -99,7 +99,9 @@ def lambda_handler(event, context):
             azure = 'Y' if 'AZURE_ARM' in clouds else 'N'
             gcp = 'Y' if 'GCE' in clouds else 'N'
             alicloud = 'Y' if 'ALICLOUD' in clouds else 'N'
-            cells = [insight['name'], insight['description'], insight['severity'], aws, azure ,gcp, alicloud]
+            k8s = 'Y' if 'K8S' in clouds else 'N'
+            oci = 'Y' if 'OCI' in clouds else 'N'
+            cells = [insight['name'], insight['description'], insight['severity'], aws, azure ,gcp, alicloud, k8s, oci]
             for pack_id in pack_ids:
                 compliance_rule = ''
                 for pack in packs:
@@ -117,7 +119,7 @@ def lambda_handler(event, context):
 
     # Make filter spreadsheet
     with open(filters_path, 'w') as filtersfile:
-        headers = ['Name', 'Supported Resources', 'Description', 'AWS', 'AZURE', 'GCP', 'ALICLOUD', 'K8S']
+        headers = ['Name', 'Supported Resources', 'Description', 'AWS', 'AZURE', 'GCP', 'ALICLOUD', 'K8S', 'OCI']
         writer = csv.writer(filtersfile)
         writer.writerow(headers)
 
@@ -129,21 +131,22 @@ def lambda_handler(event, context):
             gcp = 'Y' if 'GCE' in clouds else 'N'
             alicloud = 'Y' if 'ALICLOUD' in clouds else 'N'
             k8s = 'Y' if 'K8S' in clouds else 'N'
+            oci = 'Y' if 'OCI' in clouds else 'N'
 
-            if aws == 'N' and azure == 'N' and gcp == 'N' and alicloud == 'N' and k8s == 'N':
-                aws = azure = gcp = alicloud = k8s = 'Y' 
+            if aws == 'N' and azure == 'N' and gcp == 'N' and alicloud == 'N' and k8s == 'N' and oci == 'N':
+                aws = azure = gcp = alicloud = k8s = oci = 'Y' 
 
             if row['name'] == 'Instance Without Recent Snapshot (VMware Only)' or row['name'] == 'Instance VMware Tools Status':
                 continue
 
-            cells = [row['name'], str(row['supported_resources']), row['description'], aws, azure, gcp, alicloud, k8s]
+            cells = [row['name'], str(row['supported_resources']), row['description'], aws, azure, gcp, alicloud, k8s, oci]
             writer.writerow(cells)
     filtersfile.close()
 
 
     # Make bots spreadsheet
     with open(bots_path, 'w') as botsfile:
-        headers = ['Name', 'Supported Resources', 'Description', 'AWS', 'AZURE', 'GCP', 'ALICLOUD', 'K8S', 'Permissions']
+        headers = ['Name', 'Supported Resources', 'Description', 'AWS', 'AZURE', 'GCP', 'ALICLOUD', 'K8S', 'OCI', 'Permissions']
         writer = csv.writer(botsfile)
         writer.writerow(headers)
 
@@ -155,11 +158,12 @@ def lambda_handler(event, context):
             gcp = 'Y' if 'GCE' in clouds else 'N'
             alicloud = 'Y' if 'ALICLOUD' in clouds else 'N'
             k8s = 'Y' if 'K8S' in clouds else 'N'
+            oci = 'Y' if 'OCI' in clouds else 'N'
 
             if aws == 'N' and azure == 'N' and gcp == 'N' and alicloud == 'N' and k8s == 'N':
                 aws = azure = gcp = alicloud = k8s = 'Y' 
 
-            cells = [row['name'], str(row['supported_resources']), row['description'], aws, azure, gcp, alicloud, k8s, row['permissions']]
+            cells = [row['name'], str(row['supported_resources']), row['description'], aws, azure, gcp, alicloud, k8s, oci, row['permissions']]
             writer.writerow(cells)
     botsfile.close()
 
