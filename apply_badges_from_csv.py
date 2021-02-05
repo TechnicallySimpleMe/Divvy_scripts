@@ -9,11 +9,11 @@ import sys
 requests.packages.urllib3.disable_warnings() # throws SSL warnings otherwise
 
 # Username/password to authenticate against the API
-username = "alexc"
-password = "xTm=cT8r+AvjwjhFT" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
+username = ""
+password = "" # Leave this blank if you don't want it in plaintext and it'll prompt you to input it when running the script. 
 
 # API URL
-base_url = "https://sales-demo.divvycloud.com"
+base_url = ""
 
 try:
     file_name = str(sys.argv[1])
