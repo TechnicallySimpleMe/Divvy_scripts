@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 ################################################
 # Written by:                                  #
 # -------------------------------------------- #
@@ -36,6 +33,8 @@ import getpass as secret
 computeCount=0
 dbCount=0
 cacheCount=0
+detailsValid=False
+resource_client=''
 
 
 # Retrieve the list of Resource Groups in your subscription.  
@@ -138,7 +137,7 @@ def calculate_billable_instances():
     print(">> Cache Instances >  " + str(cacheCount)) 
     print("------------------------------------------------")
     print("\n######################################")
-    print("| Total Billable instances   >  " + str(computeCount+dbCount+cacheCount) +" |") 
+    print("| Total Billable instances   >  " + str(computeCount+dbCount+cacheCount) +"   |") 
     print("######################################")
         
 
@@ -153,24 +152,46 @@ def start_here():
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     print("\n")
     
+    
+def get_subscription_details():
+    
+    global detailsValid
+    global resource_client
+    
+    try:
+        subscription = input('ENTER YOUR SUBSCRIPTION ID: ')
+    
+        # Retrieve subscription ID from environment variable.
+        subscription_id = os.environ.get(
+            "AZURE_SUBSCRIPTION_ID", subscription) 
+    
+        # Acquire a credential object using CLI-based authentication.
+        credential = ServicePrincipalCredentials(
+            client_id=input("ENTER YOUR CLIENT ID: "),
+            secret=secret.getpass("ENTER YOUR SECRET KEY: "),    
+            tenant=input('ENTER YOUR TENANT ID: '))
+        
+        detailsValid = True  
+        
+    except:
+        print("\n")
+        print("Please ensure SUBSCRIPTION ID, CLIENT ID, TENANT ID and SECRET KEY are correct.")
+        print("\n")
+        print("Please try again!")
+        return detailsValid
+    
+    else:
+        resource_client = ResourceManagementClient(credential, subscription_id)
+        
+        
 start_here()
-subscription = input('ENTER YOUR SUBSCRIPTION ID: ')
-    
-# Acquire a credential object using CLI-based authentication.
-credential = ServicePrincipalCredentials(
-client_id=input("ENTER YOUR CLIENT ID: "),
-secret=secret.getpass("ENTER YOUR SECRET KEY: "),    
-tenant=input('ENTER YOUR TENANT ID: '))
-    
-# Retrieve subscription ID from environment variable.
-subscription_id = os.environ.get(
-    "AZURE_SUBSCRIPTION_ID", subscription) 
 
-# Obtain the management object for resources.
-resource_client = ResourceManagementClient(credential, subscription_id) 
+while not detailsValid:
+   get_subscription_details()
 
 print("\n")
 print("Please wait, this may take a moment ...")
 print("\n")
-calculate_billable_instances()
 
+calculate_billable_instances()
+    
