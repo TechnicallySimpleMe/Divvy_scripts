@@ -152,7 +152,8 @@ def start_here():
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     print("\n")
     
-    
+
+# Get Subscription Details as input ftom user.    
 def get_subscription_details():
     
     global detailsValid
@@ -183,9 +184,10 @@ def get_subscription_details():
     else:
         resource_client = ResourceManagementClient(credential, subscription_id)
         
-        
+# Display pre-requisites to the user.       
 start_here()
 
+# Validate Subscription details.
 while not detailsValid:
    get_subscription_details()
 
